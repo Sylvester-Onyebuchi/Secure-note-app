@@ -1,0 +1,46 @@
+services:
+  app:
+    build: .
+    container_name: secure-notes-app
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    networks:
+      - app-note
+  postgres:
+    image: 'postgres'
+    restart: always
+    env_file:
+     - .env
+    ports:
+      - '5437:5432'
+    volumes:
+      - secureNotes_data:/var/lib/postgresql/data
+    networks:
+      - app-note
+
+
+  pgadmin:
+    container_name: secureNote_pgadmin
+    image: dpage/pgadmin4
+    env_file:
+      - .env
+    ports:
+      - "9000:80"
+    depends_on:
+      - postgres
+    restart: always
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - app-note
+
+volumes:
+  secureNotes_data:
+  pgadmin_data:
+networks:
+  app-note:
+    driver: bridge
