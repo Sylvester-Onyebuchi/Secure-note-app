@@ -7,6 +7,7 @@ import com.sylvester.dempproject.security.jwt.JwtUtils;
 import com.sylvester.dempproject.security.service.UserDetailsImpl;
 import com.sylvester.dempproject.service.TwoFAService;
 import com.sylvester.dempproject.service.UserService;
+import com.sylvester.dempproject.serviceimpl.EmailService;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -45,7 +46,7 @@ public class UserController {
 
     private final TwoFAService twoFAService;
 
-    public UserController(UserService userService, AuthenticationManager authenticationManager, JwtUtils jwtUtils, TwoFAService twoFAService) {
+    public UserController(UserService userService, AuthenticationManager authenticationManager, JwtUtils jwtUtils, EmailService emailService, TwoFAService twoFAService) {
         this.userService = userService;
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
@@ -65,6 +66,7 @@ public class UserController {
     public ResponseEntity<?> getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal().equals("anonymousUser")) {
+
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("Message","No authenticated user"));
 
         }

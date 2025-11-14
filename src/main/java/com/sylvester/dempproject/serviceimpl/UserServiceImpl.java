@@ -288,7 +288,7 @@ public class UserServiceImpl implements UserService {
         user.setPasswordResetToken(token);
         user.setPasswordResetDate(expiryDate);
         userRepository.save(user);
-        String frontendUrl = "http://localhost:3000";
+        String frontendUrl = "http://localhost:3000"; // for example
         String resetUrl = frontendUrl + "/reset-password?token=" + token;
 
         try {

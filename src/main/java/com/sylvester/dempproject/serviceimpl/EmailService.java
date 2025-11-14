@@ -49,10 +49,14 @@ public class EmailService {
         javaMailSender.send(mailMessage);
     }
 
+    @Async
     public void sendPasswordResetEmail( String email, String resetUrl,String name) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(email);
         mailMessage.setSubject("Password reset");
-        mailMessage.setText("Dear "+name+". Use this link sent to you to reset your password\n"+resetUrl+"\nYours app team");
+        mailMessage.setText("Dear "+name+", Use this link sent to you to reset your password\n"+resetUrl+"\nYours app team");
+        mailMessage.setFrom(sender);
+        javaMailSender.send(mailMessage);
     }
+
 }
