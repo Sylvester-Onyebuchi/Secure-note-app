@@ -17,10 +17,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Base64;
 import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
@@ -278,14 +280,25 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        String token = UUID.randomUUID().toString();
+        SecureRandom random = new SecureRandom();
+        byte[] bytes = new byte[32];
+        random.nextBytes(bytes);
+        String token = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
         Instant expiryDate = Instant.now().plus(24, ChronoUnit.HOURS);
         user.setPasswordResetToken(token);
         user.setPasswordResetDate(expiryDate);
         userRepository.save(user);
         String frontendUrl = "http://localhost:3000";
         String resetUrl = frontendUrl + "/reset-password?token=" + token;
-        emailService.sendPasswordResetEmail(user.getEmail(), resetUrl, user.getUsername());
+
+        try {
+            emailService.sendPasswordResetEmail(user.getEmail(), resetUrl, user.getUsername());
+        } catch (Exception e) {
+            user.setPasswordResetToken(null);
+            user.setPasswordResetDate(null);
+            userRepository.save(user);
+            throw new RuntimeException("Failed to send password reset email", e);
+        }
     }
 
 
