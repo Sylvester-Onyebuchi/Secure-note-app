@@ -25,7 +25,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 import java.util.Optional;
 import java.util.Random;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -112,14 +111,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Response deleteUser(Long id) {
+    public void deleteUser(Long id) {
         userRepository.findById(id).orElseThrow(
                 () -> new UserNotFoundException("user not found")
         );
         userRepository.deleteById(id);
-        return Response.builder()
-                .message("User deleted successfully")
-                .build();
     }
 
     @Override

@@ -14,7 +14,7 @@ public interface UserService {
     Response createUser(UserRequest userRequest);
     Response getUser(Long id);
     Response updateUserRole(Long id, UserRoleUpdate roleUpdate);
-    Response deleteUser(Long id);
+    void deleteUser(Long id);
     Response updateUser(Long id,UserRequest userRequest);
     Response verifyUser(VerifyUserRequest verifyUser, Long userId);
     Response checkIfVerified(Long userId);
